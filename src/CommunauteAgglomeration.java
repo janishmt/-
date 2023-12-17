@@ -101,6 +101,57 @@ public class CommunauteAgglomeration {
      * @return La communauté d'agglomération chargée.
      * @throws FileNotFoundException Si le fichier n'est pas trouvé.
      */
+
+
+
+    public void optimiserBornesAvecContrainte(int k) {
+        int i = 0;
+        int scoreCourant = nombreTotalBornes();
+
+        while (i < k) {
+            char ville = choisirVilleAleatoire();
+
+            boolean avaitBorne = aZoneDeRecharge(ville);
+
+            if (avaitBorne) {
+                retirerZoneDeRecharge(ville);
+            } else {
+                if (!auMoinsUnVoisinAvecBorne(ville)) {
+                    ajouterZoneDeRecharge(ville);
+                }
+            }
+
+            int nouveauScore = nombreTotalBornes();
+
+            if (nouveauScore < scoreCourant) {
+                i = 0;
+                scoreCourant = nouveauScore;
+            } else {
+                i++;
+            }
+        }
+    }
+
+    public boolean auMoinsUnVoisinAvecBorne(char ville) {
+        int index = indexVilles.indexOf(ville);
+        for (int i = 0; i < matriceAdjacence.length; i++) {
+            if (matriceAdjacence[index][i] && zonesDeRecharge[i]) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public int nombreTotalBornes() {
+        int total = 0;
+        for (boolean zoneDeRecharge : zonesDeRecharge) {
+            if (zoneDeRecharge) {
+                total++;
+            }
+        }
+        return total;
+    }
+    
     public static CommunauteAgglomeration chargerDepuisFichier(File file) throws FileNotFoundException {
         Scanner scanner = new Scanner(file);
 
