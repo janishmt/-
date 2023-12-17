@@ -1,9 +1,11 @@
-import java.util.ArrayList;
+package projetS5;
 
-/**
- * La classe CommunauteAgglomeration représente une communauté d'agglomération avec des villes, des routes
- * et des zones de recharge.
- */
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.util.ArrayList;
+import java.util.Scanner;
+
+
 public class CommunauteAgglomeration {
     private boolean[][] matriceAdjacence;
     private ArrayList<Character> indexVilles;
@@ -11,7 +13,7 @@ public class CommunauteAgglomeration {
 
     /**
      * Constructeur de la classe CommunauteAgglomeration.
-     * 
+     *
      * @param nombreVilles Le nombre initial de villes dans la communauté.
      */
     public CommunauteAgglomeration(int nombreVilles) {
@@ -22,7 +24,7 @@ public class CommunauteAgglomeration {
 
     /**
      * Ajoute une nouvelle ville à la communauté.
-     * 
+     *
      * @param ville La lettre représentant la nouvelle ville.
      */
     public void ajouterVille(char ville) {
@@ -31,7 +33,7 @@ public class CommunauteAgglomeration {
 
     /**
      * Ajoute une route entre deux villes dans la communauté.
-     * 
+     *
      * @param villeA La première ville.
      * @param villeB La deuxième ville.
      */
@@ -44,22 +46,31 @@ public class CommunauteAgglomeration {
 
     /**
      * Ajoute une zone de recharge à une ville spécifiée.
-     * 
+     *
      * @param ville La ville à laquelle ajouter une zone de recharge.
      */
     public void ajouterZoneDeRecharge(char ville) {
         int indexVille = indexVilles.indexOf(ville);
-        zonesDeRecharge[indexVille] = true;
+
+        if (!zonesDeRecharge[indexVille]) {
+            zonesDeRecharge[indexVille] = true;
+        } else {
+            System.out.println("Il existe déjà une borne dans cette ville");
+        }
     }
 
     /**
      * Retire la zone de recharge d'une ville spécifiée.
-     * 
+     *
      * @param ville La ville de laquelle retirer la zone de recharge.
      */
     public void retirerZoneDeRecharge(char ville) {
         int indexVille = indexVilles.indexOf(ville);
-        zonesDeRecharge[indexVille] = false;
+        if (zonesDeRecharge[indexVille]) {
+            zonesDeRecharge[indexVille] = false;
+        } else {
+            System.out.println("Il n'existe pas de borne dans cette ville");
+        }
     }
 
     /**
@@ -81,5 +92,33 @@ public class CommunauteAgglomeration {
             }
         }
         System.out.println();
+    }
+
+    /**
+     * Charge une communauté d'agglomération à partir d'un fichier texte.
+     *
+     * @param file Le fichier à partir duquel charger la communauté d'agglomération.
+     * @return La communauté d'agglomération chargée.
+     * @throws FileNotFoundException Si le fichier n'est pas trouvé.
+     */
+    public static CommunauteAgglomeration chargerDepuisFichier(File file) throws FileNotFoundException {
+        Scanner scanner = new Scanner(file);
+
+        int nombreVilles = Integer.parseInt(scanner.nextLine().trim());
+        CommunauteAgglomeration ca = new CommunauteAgglomeration(nombreVilles);
+
+        for (int i = 0; i < nombreVilles; i++) {
+            char ville = scanner.nextLine().charAt(0);
+            ca.ajouterVille(ville);
+        }
+
+        while (scanner.hasNextLine()) {
+            String[] line = scanner.nextLine().split(" ");
+            char villeA = line[0].charAt(0);
+            char villeB = line[1].charAt(0);
+            ca.ajouterRoute(villeA, villeB);
+        }
+
+        return ca;
     }
 }
