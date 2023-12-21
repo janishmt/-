@@ -1,0 +1,98 @@
+//package projetS5;
+
+
+import java.io.*;
+import java.util.Scanner;
+
+/**
+ * La classe GestionFichier fournit des méthodes pour charger et sauvegarder une communauté d'agglomération depuis/vers un fichier.
+ */
+public class GestionFichier {
+
+    /**
+     * Charge une communauté d'agglomération depuis un fichier.
+     *
+     * @param fichier Le fichier à partir duquel charger la communauté d'agglomération.
+     * @return La communauté d'agglomération chargée depuis le fichier.
+     * @throws FileNotFoundException Si le fichier spécifié n'est pas trouvé.
+     */
+    public static CommunauteAgglomeration chargerDepuisFichier(File fichier) throws FileNotFoundException {
+        Scanner scanner = new Scanner(fichier);
+        int nombreVilles = 0;
+
+        // Première lecture pour compter le nombre de villes
+        while (scanner.hasNextLine()) {
+            String line = scanner.nextLine().trim();
+            if (line.startsWith("ville")) {
+                nombreVilles++;
+            }
+        }
+        scanner.close();
+
+        // Création de l'instance de CommunauteAgglomeration
+        CommunauteAgglomeration ca = new CommunauteAgglomeration(nombreVilles);
+
+        // Réinitialiser le scanner pour relire le fichier
+        scanner = new Scanner(fichier);
+
+        // Deuxième lecture pour traiter les données
+        while (scanner.hasNextLine()) {
+            String line = scanner.nextLine().trim();
+            if (line.startsWith("ville")) {
+                char ville = line.charAt(6);
+                ca.ajouterVille(ville);
+            } else if (line.startsWith("route")) {
+                char villeA = line.charAt(6);
+                char villeB = line.charAt(8);
+                ca.ajouterRoute(villeA, villeB);
+            } else if (line.startsWith("recharge")) {
+                char ville = line.charAt(9);
+                ca.ajouterZoneDeRecharge(ville);
+            }
+        }
+
+        scanner.close();
+        return ca;
+    }
+
+    /**
+     * Sauvegarde une communauté d'agglomération dans un fichier.
+     *
+     * @param fichier Le fichier dans lequel sauvegarder la communauté d'agglomération.
+     * @param ca      La communauté d'agglomération à sauvegarder.
+     * @throws IOException En cas d'erreur lors de la sauvegarde du fichier.
+     */
+
+    public static void sauvegarderDansFichier(File fichier, CommunauteAgglomeration ca) throws IOException {
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(fichier))) {
+            // Écrire les déclarations des villes
+            for (char ville : ca.getIndexVilles()) {
+                writer.write("ville(" + ville + ").");
+                writer.newLine();
+            }
+
+            // Écrire les déclarations des routes
+            for (int i = 0; i < ca.getMatriceAdjacence().length; i++) {
+                for (int j = i + 1; j < ca.getMatriceAdjacence().length; j++) {
+                    if (ca.existeRoute(i, j)) {
+                        writer.write("route(" + ca.getVilleAtIndex(i) + "," + ca.getVilleAtIndex(j) + ").");
+                        writer.newLine();
+                    }
+                }
+            }
+
+            // Écrire les déclarations des zones de recharge
+            for (int i = 0; i < ca.getZonesDeRecharge().length; i++) {
+                if (ca.getZonesDeRecharge()[i]) {
+                    writer.write("recharge(" + ca.getVilleAtIndex(i) + ").");
+                    writer.newLine();
+                }
+            }
+
+            System.out.println("Communauté d'agglomération sauvegardée avec succès.");
+        } catch (IOException e) {
+            System.out.println("Erreur lors de la sauvegarde de la communauté d'agglomération dans le fichier.");
+            throw e;
+        }
+    }
+}
