@@ -1,0 +1,35 @@
+package projetS5;
+
+
+/**
+ * La classe AlgorithmeCouvertureSommet représente un algorithme pour résoudre automatiquement la couverture par les sommets.
+ */
+
+
+ public class AlgorithmeCouvertureSommet {
+    
+    
+    private CommunauteAgglomeration communaute;
+
+    public AlgorithmeCouvertureSommet(CommunauteAgglomeration communaute) {
+        this.communaute = communaute;
+    }
+
+    /**
+     * Exécute l'algorithme de couverture par les sommets.
+     */
+    public void executer() {
+        // Initialiser toutes les villes sans borne de recharge
+        for (int i = 0; i < communaute.getNombreVilles(); i++) {
+            communaute.retirerZoneDeRecharge(communaute.getIndexVilles().get(i));
+        }
+
+        // Pour chaque ville, vérifier si elle a besoin d'une borne de recharge
+        for (int i = 0; i < communaute.getNombreVilles(); i++) {
+            if (!communaute.estAccessible(i)) {
+                // Si la ville n'est pas accessible, ajouter une borne de recharge
+                communaute.ajouterZoneDeRecharge(communaute.getIndexVilles().get(i));
+            }
+        }
+    }
+}
