@@ -1,5 +1,4 @@
 package projetS5;
-
 import java.util.Scanner;
 
 
@@ -47,6 +46,7 @@ public class Menu {
         while (!finRoutes) {
             System.out.println("[1] Ajouter une route");
             System.out.println("[2] Terminer l'ajout de routes");
+            System.out.print("Votre choix : ");
             int choix = scanner.nextInt();
             scanner.nextLine(); 
 
@@ -92,6 +92,7 @@ public class Menu {
             System.out.println("[1] Ajouter une zone de recharge");
             System.out.println("[2] Retirer une zone de recharge");
             System.out.println("[3] Terminer la configuration");
+            System.out.print("Votre choix : ");
             int action = scanner.nextInt();
             scanner.nextLine(); 
 
@@ -136,3 +137,4 @@ public class Menu {
         ca.retirerZoneDeRecharge(villeRetirer);
     }
 }
+
